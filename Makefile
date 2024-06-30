@@ -30,6 +30,10 @@ init:
 install:
 	@echo ${NAME} ${PACKAGE} ${DATE} ${GIT_STATUS}
 
+publish:
+	git tag ${VERSION}
+	git push origin ${VERSION}
+
 race:
 	go run -race ./...
 
