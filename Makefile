@@ -11,6 +11,8 @@ build:
 
 clean:
 	go clean -i -r -x -cache -testcache -modcache -fuzzcache
+	rm -v go.mod
+	rm -v go.sum
 	find ./ -name ".DS_Store" -delete
 	find ./ -name "._.DS_Store" -delete
 
@@ -20,8 +22,8 @@ ifneq (${GIT_STATUS},)
 endif
 
 init:
-	go mod init ${NAME}
-#	go mod init ${PACKAGE}
+#	go mod init ${NAME}
+	go mod init ${PACKAGE}
 	go get -u ./...
 	go mod tidy
 

@@ -1,4 +1,4 @@
-module io_fs
+module github.com/ed006949/io_fs
 
 go 1.22.4
 
