@@ -10,11 +10,12 @@ build:
 	go build -ldflags="-s -w" -trimpath -o "./bin/" ./...
 
 clean:
-	go clean -i -r -x -cache -testcache -modcache -fuzzcache
-	rm -v go.mod
-	rm -v go.sum
-	find ./ -name ".DS_Store" -delete
-	find ./ -name "._.DS_Store" -delete
+	-gh auth logout
+	-go clean -i -r -x -cache -testcache -modcache -fuzzcache
+	-rm -v go.mod
+	-rm -v go.sum
+	-find ./ -name ".DS_Store" -delete
+	-find ./ -name "._.DS_Store" -delete
 
 commit:
 ifneq (${GIT_STATUS},)
@@ -22,6 +23,7 @@ ifneq (${GIT_STATUS},)
 endif
 
 init:
+	gh auth login --with-token < ~/.git_token
 #	go mod init ${NAME}
 	go mod init ${PACKAGE}
 	go get -u ./...
@@ -33,7 +35,7 @@ install:
 publish:
 	git tag v${VERSION}
 	git push origin v${VERSION}
-	git release create v${VERSION}
+	gh release create v${VERSION}
 
 race:
 	go run -race ./...
