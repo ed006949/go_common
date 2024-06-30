@@ -20,8 +20,8 @@ ifneq (${GIT_STATUS},)
 endif
 
 init:
-#	go mod init ${NAME}
-	go mod init ${PACKAGE}
+	go mod init ${NAME}
+#	go mod init ${PACKAGE}
 	go get -u ./...
 	go mod tidy
 
