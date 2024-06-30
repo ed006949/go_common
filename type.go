@@ -4,7 +4,10 @@ import (
 	"io/fs"
 )
 
-type IO_FS_Content struct {
+type List_type map[string]string
+type Content_type map[string]*IO_FS_type
+
+type IO_FS_type struct {
 	Entry   *fs.DirEntry
 	Content []byte
 }

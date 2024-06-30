@@ -1,8 +1,6 @@
 package io_fs
 
 import (
-	"io/fs"
-	"os"
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
@@ -33,28 +31,3 @@ func IO_file_read() {
 	// }
 }
 func IO_file_write() {}
-
-func walk(name string, entry fs.DirEntry, err error) error {
-	switch {
-	case err != nil:
-		log.Fatalf("filepath.WalkDirFunc error: %v. ACTION: ERROR.", err)
-	}
-
-	Content[name] = &IO_FS_Content{
-		Entry: &entry,
-		Content: func() []byte {
-			switch {
-			case !entry.IsDir():
-				switch a, b := os.ReadFile(name); {
-				case b != nil:
-					log.Fatalf("os.ReadFile error: %v. ACTION: ERROR.", b)
-				default:
-					return a
-				}
-			}
-			return nil
-		}(),
-	}
-
-	return nil
-}

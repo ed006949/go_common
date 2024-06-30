@@ -7,7 +7,7 @@ all:	commit build commit
 
 build:
 #	go build -ldflags="-s -w" -trimpath -o "./bin/${NAME}" ./src/...
-	go build -ldflags="-s -w" -trimpath -o "./bin/" ./...
+#	go build -ldflags="-s -w" -trimpath -o "./bin/" ./...
 
 clean:
 	-gh auth logout
@@ -32,7 +32,7 @@ init:
 install:
 	@echo ${NAME} ${PACKAGE} ${DATE} ${GIT_STATUS}
 
-publish:
+release:
 	git add .
 	git commit -m "${DATE}"
 	git tag v${VERSION}
@@ -40,13 +40,13 @@ publish:
 	gh release create v${VERSION} --generate-notes --latest=true
 
 race:
-	go run -race ./...
+#	go run -race ./...
 
 run:
-	go run -ldflags="-s -w" -trimpath ./...
+#	go run -ldflags="-s -w" -trimpath ./...
 
 test:
-	go test ./...
+#	go test ./...
 
 update:
 	go get -u ./...
