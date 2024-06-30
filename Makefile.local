@@ -1,5 +1,5 @@
-NAME		:=	go_template
+NAME		:=	io_fs
 PACKAGE		:=	github.com/ed006949/${NAME}
 
 execute:
-	./bin/${NAME}
+	@echo nothing to execute
