@@ -6,9 +6,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func Initialize() {
-	IO_file_read()
-}
+// func Initialize() {
+// }
 
 func IO_file_read() {
 	for a, b := range List {
@@ -30,4 +29,5 @@ func IO_file_read() {
 	// 	}
 	// }
 }
+
 func IO_file_write() {}
