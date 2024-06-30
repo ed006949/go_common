@@ -1,6 +1,6 @@
 NAME		:=	io_fs
 PACKAGE		:=	github.com/ed006949/${NAME}
-VERSION		:=	0.0.9
+VERSION		:=	0.0.10
 
 execute:
 	@echo nothing to execute
