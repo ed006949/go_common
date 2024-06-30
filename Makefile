@@ -34,6 +34,7 @@ race:
 release:
 	git add .
 	git commit -m "${DATE}"
+	git push
 	git tag v${VERSION}
 	git push origin v${VERSION}
 	gh release create v${VERSION} --generate-notes --latest=true
