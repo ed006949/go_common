@@ -1,6 +1,10 @@
+ORIGIN		:=	github.com/ed006949
 NAME		:=	io_fs
-PACKAGE		:=	github.com/ed006949/${NAME}
-VERSION		:=	0.0.14
+VERSION		:=	0.0.17
+
+PACKAGE		:=	${ORIGIN}/${NAME}
+
+TARGET		:=	${PACKAGE}
 
 execute:
 	@echo nothing to execute
