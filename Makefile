@@ -33,9 +33,11 @@ install:
 	@echo ${NAME} ${PACKAGE} ${DATE} ${GIT_STATUS}
 
 publish:
+	git add .
+	git commit -m "${DATE}"
 	git tag v${VERSION}
 	git push origin v${VERSION}
-	gh release create v${VERSION}
+	gh release create v${VERSION} --generate-notes --latest=true
 
 race:
 	go run -race ./...
