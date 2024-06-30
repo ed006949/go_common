@@ -33,6 +33,7 @@ install:
 publish:
 	git tag v${VERSION}
 	git push origin v${VERSION}
+	git release create v${VERSION}
 
 race:
 	go run -race ./...
