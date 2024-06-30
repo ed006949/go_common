@@ -7,7 +7,7 @@ all:	commit build commit
 
 build:
 #	go build -ldflags="-s -w" -trimpath -o "./bin/${NAME}" ./src/...
-	go build -ldflags="-s -w" -trimpath -o "./bin/" ./...
+	go build -ldflags="-s -w" -trimpath -o "./bin/" ./src/...
 
 clean:
 	go clean -i -r -x -cache -testcache -modcache -fuzzcache
@@ -20,7 +20,8 @@ ifneq (${GIT_STATUS},)
 endif
 
 init:
-	go mod init ${NAME}
+#	go mod init ${NAME}
+	go mod init ${PACKAGE}
 	go get -u ./...
 	go mod tidy
 
