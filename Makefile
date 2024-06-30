@@ -31,8 +31,8 @@ install:
 	@echo ${NAME} ${PACKAGE} ${DATE} ${GIT_STATUS}
 
 publish:
-	git tag ${VERSION}
-	git push origin ${VERSION}
+	git tag v${VERSION}
+	git push origin v${VERSION}
 
 race:
 	go run -race ./...
