@@ -16,7 +16,9 @@ clean:
 
 commit:
 ifneq ($(shell git status --short),)
-	git add . && git commit -m "${DATE}" && git push
+	git add .
+	git commit -m "${DATE}"
+	git push
 endif
 
 init:
@@ -31,10 +33,7 @@ install:
 race:
 	go run -race ./...
 
-release:
-	git add .
-	git commit -m "${DATE}"
-	git push
+release: commit
 	git tag v${VERSION}
 	git push origin v${VERSION}
 	gh release create v${VERSION} --generate-notes --latest=true

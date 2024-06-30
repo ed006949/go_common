@@ -1,6 +1,6 @@
 ORIGIN		:=	github.com/ed006949
 NAME		:=	io_fs
-VERSION		:=	0.0.20
+VERSION		:=	0.0.30
 
 PACKAGE		:=	${ORIGIN}/${NAME}
 
