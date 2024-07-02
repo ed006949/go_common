@@ -4,25 +4,24 @@ import (
 	"io/fs"
 	"path/filepath"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/ed006949/io_fs/e"
 )
 
 func (receiver Content) Read() {
-	var (
-		err error
-	)
 	for _, b := range receiver {
 		b.Abs = Abs(b.Abs)
 		var (
 			walkDirFunc = func(name string, dirEntry fs.DirEntry, err error) error {
-				Fatalf("filepath.WalkDirFunc error: %v.", err)
-
-				// switch {
-				// case err != nil:
-				// 	log.Fatalf("filepath.WalkDirFunc error: %v. ACTION: ERROR.", err)
-				// }
+				e.Fatalf("filepath.WalkDirFunc error: %v.", err)
 
 				switch dirEntry.Type() {
+				case fs.ModeDir:
+					b.Entries[name] = &Entry{
+						DirEntry:  dirEntry,
+						Content:   nil,
+						Target:    "",
+						IsChanged: false,
+					}
 				case fs.ModeSymlink:
 					b.Entries[name] = &Entry{
 						DirEntry:  dirEntry,
@@ -44,13 +43,10 @@ func (receiver Content) Read() {
 			}
 		)
 
-		err = filepath.WalkDir(b.Abs, walkDirFunc)
-		Fatalf("filepath.WalkDir error: %v.", err)
-
-		// switch err = filepath.WalkDir(b.Abs, walkDirFunc); {
-		// case err != nil:
-		// 	log.Fatalf("filepath.WalkDir error: %v. ACTION: ERROR.", err)
-		// }
+		var (
+			err = filepath.WalkDir(b.Abs, walkDirFunc)
+		)
+		e.Fatalf("filepath.WalkDir error: %v.", err)
 	}
 }
 
@@ -95,36 +91,38 @@ func (receiver Content) WriteTemp() {
 
 	for _, b := range receiver {
 		for c, d := range b.Entries {
-			switch {
-			case d.DirEntry.IsDir():
-				continue
-			}
-
 			var (
 				path = filepath.Join(dirTemp, filepath.Dir(c))
 				name = filepath.Join(path, d.DirEntry.Name())
 			)
 
+			// TODO VFS
 			switch {
 			case IsNotExist(path):
 				MkdirAll(path, 0755)
+			default:
 			}
 
 			switch d.DirEntry.Type() {
 			case fs.ModeDir:
+				MkdirAll(filepath.Join(dirTemp, c), 0755)
 				continue
 			case fs.ModeSymlink:
 				Symlink(d.Target, name)
+				fallthrough
 			case 0:
+				switch {
+				case d.IsChanged:
+					WriteFile(name, d.Content, 0644)
+				}
+			default:
+				continue
 			}
 
-			switch {
-			case d.IsChanged:
-				WriteFile(name, d.Content, 0644)
-			}
-
+			// switch {
+			// case d.IsChanged:
+			// 	WriteFile(name, d.Content, 0644)
+			// }
 		}
 	}
-
-	log.Infof("%s", dirTemp)
 }
