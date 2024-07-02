@@ -1,6 +1,6 @@
 ORIGIN		:=	github.com/ed006949
 NAME		:=	go_common
-VERSION		:=	0.0.50
+VERSION		:=	0.0.55
 
 PACKAGE		:=	${ORIGIN}/${NAME}
 

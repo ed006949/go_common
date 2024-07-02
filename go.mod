@@ -1,4 +1,4 @@
-module github.com/ed006949/io_fs
+module github.com/ed006949/go_common
 
 go 1.22.4
 

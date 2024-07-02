@@ -4,7 +4,7 @@ import (
 	"io/fs"
 	"path/filepath"
 
-	"github.com/ed006949/io_fs/e"
+	"github.com/ed006949/go_common/e"
 )
 
 func (receiver Content) Read() {
