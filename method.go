@@ -15,10 +15,12 @@ func (receiver Content) Read() {
 		b.Abs = Abs(b.Abs)
 		var (
 			walkDirFunc = func(name string, dirEntry fs.DirEntry, err error) error {
-				switch {
-				case err != nil:
-					log.Fatalf("filepath.WalkDirFunc error: %v. ACTION: ERROR.", err)
-				}
+				Fatalf("filepath.WalkDirFunc error: %v.", err)
+
+				// switch {
+				// case err != nil:
+				// 	log.Fatalf("filepath.WalkDirFunc error: %v. ACTION: ERROR.", err)
+				// }
 
 				switch dirEntry.Type() {
 				case fs.ModeSymlink:
@@ -42,10 +44,13 @@ func (receiver Content) Read() {
 			}
 		)
 
-		switch err = filepath.WalkDir(b.Abs, walkDirFunc); {
-		case err != nil:
-			log.Fatalf("filepath.WalkDir error: %v. ACTION: ERROR.", err)
-		}
+		err = filepath.WalkDir(b.Abs, walkDirFunc)
+		Fatalf("filepath.WalkDir error: %v.", err)
+
+		// switch err = filepath.WalkDir(b.Abs, walkDirFunc); {
+		// case err != nil:
+		// 	log.Fatalf("filepath.WalkDir error: %v. ACTION: ERROR.", err)
+		// }
 	}
 }
 
