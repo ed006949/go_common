@@ -2,56 +2,124 @@ package io_fs
 
 import (
 	"io/fs"
-	"os"
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func (receiver Content) IOFileRead() {
+func (receiver Content) Read() {
+	var (
+		err error
+	)
 	for _, b := range receiver {
-		switch c, d := filepath.Abs(b.Abs); {
-		case d != nil:
-			log.Fatalf("filepath.Abs error: %v. ACTION: ERROR.", d)
-		default:
-			b.Abs = c
-			switch f := filepath.WalkDir(c, func(name string, dirEntry fs.DirEntry, err error) error {
+		b.Abs = Abs(b.Abs)
+		var (
+			walkDirFunc = func(name string, dirEntry fs.DirEntry, err error) error {
 				switch {
 				case err != nil:
 					log.Fatalf("filepath.WalkDirFunc error: %v. ACTION: ERROR.", err)
 				}
 
-				b.Entries[name] = &Entry{
-					DirEntry: dirEntry,
-					Content: func() []byte {
-						switch {
-						case !dirEntry.IsDir():
-							switch a, b := os.ReadFile(name); {
-							case b != nil:
-								log.Fatalf("os.ReadFile error: %v. ACTION: ERROR.", b)
-							default:
-								return a
-							}
-						}
-						return nil
-					}(),
+				switch dirEntry.Type() {
+				case fs.ModeSymlink:
+					b.Entries[name] = &Entry{
+						DirEntry:  dirEntry,
+						Content:   ReadFile(name),
+						Target:    ReadLink(name),
+						IsChanged: false,
+					}
+				case 0:
+					b.Entries[name] = &Entry{
+						DirEntry:  dirEntry,
+						Content:   ReadFile(name),
+						Target:    "",
+						IsChanged: false,
+					}
+				default:
 				}
 
 				return nil
-			}); {
-			case f != nil:
-				log.Fatalf("filepath.WalkDir error: %v. ACTION: ERROR.", f)
 			}
+		)
+
+		switch err = filepath.WalkDir(b.Abs, walkDirFunc); {
+		case err != nil:
+			log.Fatalf("filepath.WalkDir error: %v. ACTION: ERROR.", err)
 		}
 	}
-	// for _, b := range List {
-	// 	switch d := filepath.WalkDir(b, walk); {
-	// 	case d != nil:
-	// 		log.Fatalf("filepath.WalkDir error: %v. ACTION: ERROR.", d)
-	// 	}
-	// }
 }
 
-func (receiver Content) IOFileWrite() {
-	return
+// func (receiver Content) IOFileWrite() {
+// 	var (
+// 		err error
+// 	)
+// 	for _, b := range receiver {
+// 		switch _, err = os.Stat(b.Abs); {
+// 		case err != nil:
+// 			log.Fatalf("os.Stat error: %v. ACTION: ERROR.", err)
+// 		case os.IsNotExist(err):
+// 			switch f := os.MkdirAll(b.Abs, 0700); {
+// 			case f != nil:
+// 				log.Fatalf("os.MkdirAll error: %v. ACTION: ERROR.", f)
+// 			}
+// 		}
+// 	}
+// 	return
+// }
+
+func (receiver Content) WriteTemp() {
+	var (
+		// dirTemp, err = os.MkdirTemp(Abs("./tmp/"), "")
+		dirTemp = Abs("./tmp/")
+	)
+
+	// switch {
+	// case err != nil:
+	// 	log.Fatalf("os.MkdirTemp error: %v. ACTION: ERROR.", err)
+	// }
+
+	// var (
+	// 	dirTemp string
+	// 	err     error
+	// )
+	// switch dirTemp, err = os.MkdirTemp("", ""); {
+	// switch dirTemp, err = os.MkdirTemp(Abs("./tmp/"), ""); {
+	// case err != nil:
+	// 	log.Fatalf("os.MkdirTemp error: %v. ACTION: ERROR.", err)
+	// }
+
+	for _, b := range receiver {
+		for c, d := range b.Entries {
+			switch {
+			case d.DirEntry.IsDir():
+				continue
+			}
+
+			var (
+				path = filepath.Join(dirTemp, filepath.Dir(c))
+				name = filepath.Join(path, d.DirEntry.Name())
+			)
+
+			switch {
+			case IsNotExist(path):
+				MkdirAll(path, 0755)
+			}
+
+			switch d.DirEntry.Type() {
+			case fs.ModeDir:
+				continue
+			case fs.ModeSymlink:
+				Symlink(d.Target, name)
+			case 0:
+			}
+
+			switch {
+			case d.IsChanged:
+				WriteFile(name, d.Content, 0644)
+			}
+
+		}
+	}
+
+	log.Infof("%s", dirTemp)
 }
